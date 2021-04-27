@@ -60,42 +60,42 @@ int main()
 
 		switch (command) {
 		case 'z': case 'Z':
-			initialize(&headnode);
-			break;
+			initialize(&headnode);           // 새 headnode 할당
+			break; 
 		case 'p': case 'P':
-			printList(headnode);
+			printList(headnode);             // key 출력
 			break;
 		case 'i': case 'I':
 			printf("Your Key = ");
 			scanf("%d", &key);
-			insertNode(headnode, key);
+			insertNode(headnode, key);       // 오름차순 저장
 			break;
 		case 'd': case 'D':
 			printf("Your Key = ");
 			scanf("%d", &key);
-			deleteNode(headnode, key);
+			deleteNode(headnode, key);       // 노드 삭제
 			break;
 		case 'n': case 'N':
 			printf("Your Key = ");
 			scanf("%d", &key);
-			insertLast(headnode, key);
+			insertLast(headnode, key);         // 마지막에 노드 추가
 			break;
 		case 'e': case 'E':
-			deleteLast(headnode);
+			deleteLast(headnode);          //마지막 노드 삭제
 			break;
 		case 'f': case 'F':
 			printf("Your Key = ");
 			scanf("%d", &key);
-			insertFirst(headnode, key);
+			insertFirst(headnode, key);      //맨 앞에 노드 추가
 			break;
 		case 't': case 'T':
-			deleteFirst(headnode);
+			deleteFirst(headnode);           //리스트의 맨 앞 노드를 삭제
 			break;
 		case 'r': case 'R':
-			invertList(headnode);
+			invertList(headnode);          //역순 배열
 			break;
 		case 'q': case 'Q':
-			freeList(headnode);
+			freeList(headnode);           // 할당한 리스트 해제
 			break;
 		default:
 			printf("\n       >>>>>   Concentration!!   <<<<<     \n");
@@ -124,6 +124,20 @@ int initialize(listNode** h) {
 
 /* 메모리 해제 */
 int freeList(listNode* h) {
+
+	listNode* node = h->rlink;   // 해제할 노드 가리킬 포인터
+	
+	if(h->rlink == h )
+		return 0;
+	
+
+	while(node != h)
+	{
+	        node = node->rlink;
+		free(node->llink);
+	}
+	free(h);                    // 마지막으로 headnode 해제
+
 
 	return 0;
 }
@@ -212,6 +226,33 @@ int deleteFirst(listNode* h) {
  */
 int invertList(listNode* h) {
 
+       listNode* n = h->first;
+
+	listNode* next, * prev;
+	next, prev = NULL;
+
+
+	if (h == NULL)
+	{
+		printf("Head Node is not initialized.\n");
+		return 0;
+	}
+	if (h->first == NULL)
+	{
+		printf("Linked list is empty!!\n\n");    // 리스트가 비었으면
+		return 0;
+	}
+
+	while (h->first != NULL) {
+		next = prev;						
+		prev = n;						
+
+		n = n->rlink;				//다음 노드의 위치 저장
+		prev->rlink = next;
+		prev->llink = n;
+	}
+
+	h->first = prev;
 
 	return 0;
 }
