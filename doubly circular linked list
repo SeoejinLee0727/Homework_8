@@ -187,6 +187,32 @@ void printList(listNode* h) {
  */
 int insertLast(listNode* h, int key) {
 
+	listNode* n = (listNode*)malloc(sizeof(listNode));  //새로 삽입할 노드 동적 할당
+	n->key = key;
+	
+	n->rlink = h;
+	node->llink=h;
+	listNode* node = h;
+
+	if (h->rlink == h) { // 리스트가 NULL이면 맨 앞에 node 삽입
+
+		h->rlink = n;
+		h->llink = n;
+		
+		
+		node->llink = h; 
+	
+	}
+	else {
+		while (node->rlink != h)
+		{
+			node = node->rlink;    // 리스트 끝까지 포인터 이동
+		}
+		node->rlink = n; // 맨 뒤에 삽입
+		n->llink = node; // llink 연결
+		
+		h->llink = n;    // 노드의 마지막을 n으로 연결
+	}
 	return 1;
 }
 
@@ -195,6 +221,29 @@ int insertLast(listNode* h, int key) {
  * list의 마지막 노드 삭제
  */
 int deleteLast(listNode* h) {
+
+	listNode* node = h;
+
+	if (h == NULL) {
+		printf("Node is not initialized.\n\n");  //초기화된 리스트가 없다면 에러 문구 출력
+		return 0;
+	}
+
+	if (node->rlink == h) { // 리스트에 node가 하나만 존재하면
+		printf("List is empty!!\n\n");   //초기화된 리스트에 노드가 없으면
+		return 0;
+	}
+	
+	else {  //노드가 하나 이상 있으면
+		
+	listNode* n = h->llink; 
+	
+	(n->rlink)->llink = n->llink;
+	(n->llink)->rlink = n->rlink;
+	
+	
+	free(n);
+	}
 
 
 	return 1;
