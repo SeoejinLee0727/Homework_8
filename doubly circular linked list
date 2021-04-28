@@ -61,7 +61,7 @@ int main()
 		switch (command) {
 		case 'z': case 'Z':
 			initialize(&headnode);           // 새 headnode 할당
-			break; 
+			break;
 		case 'p': case 'P':
 			printList(headnode);             // key 출력
 			break;
@@ -116,25 +116,25 @@ int initialize(listNode** h) {
 
 	/* headNode에 대한 메모리를 할당하여 리턴 */
 	*h = (listNode*)malloc(sizeof(listNode));
-	(*h)->rlink = *h;
-	(*h)->llink = *h;
-	(*h)->key = -9999;
+	(*h) -> rlink = *h;
+	(*h) -> llink = *h;
+	(*h) -> key = -9999;
 	return 1;
 }
 
 /* 메모리 해제 */
 int freeList(listNode* h) {
 
-	listNode* node = h->rlink;   // 해제할 노드 가리킬 포인터
-	
-	if(h->rlink == h )
-		return 0;
-	
+	listNode* node = h -> rlink;   // 해제할 노드 가리킬 포인터
 
-	while(node != h)
+	if (h -> rlink == h)
+		return 0;
+
+
+	while (node != h)
 	{
-	        node = node->rlink;
-		free(node->llink);
+		node = node -> rlink;
+		free(node -> llink);
 	}
 	free(h);                    // 마지막으로 headnode 해제
 
@@ -187,32 +187,27 @@ void printList(listNode* h) {
  */
 int insertLast(listNode* h, int key) {
 
-	listNode* n = (listNode*)malloc(sizeof(listNode));  //새로 삽입할 노드 동적 할당
-	n->key = key;
-	
-	n->rlink = h;
-	node->llink=h;
-	listNode* node = h;
+	listNode* node = (listNode*)malloc(sizeof(listNode)); 
+	node -> key = key;
 
-	if (h->rlink == h) { // 리스트가 NULL이면 맨 앞에 node 삽입
+	node->llink = h;
+	node->rlink = h;
 
-		h->rlink = n;
-		h->llink = n;
-		
-		
-		node->llink = h; 
-	
+	listNode* n = h->llink; 
+
+	if (h == NULL)
+	{
+		h -> llink = node; 
+		h -> rlink = node;
 	}
-	else {
-		while (node->rlink != h)
-		{
-			node = node->rlink;    // 리스트 끝까지 포인터 이동
-		}
-		node->rlink = n; // 맨 뒤에 삽입
-		n->llink = node; // llink 연결
-		
-		h->llink = n;    // 노드의 마지막을 n으로 연결
+
+	else
+	{
+		n -> rlink = node; 
+		node -> llink = n;
+		h -> llink = node;
 	}
+
 	return 1;
 }
 
@@ -233,16 +228,16 @@ int deleteLast(listNode* h) {
 		printf("List is empty!!\n\n");   //초기화된 리스트에 노드가 없으면
 		return 0;
 	}
-	
+
 	else {  //노드가 하나 이상 있으면
-		
-	listNode* n = h->llink; 
-	
-	(n->rlink)->llink = n->llink;
-	(n->llink)->rlink = n->rlink;
-	
-	
-	free(n);
+
+		listNode* n = h -> llink;
+
+		(n -> rlink)->llink = n -> llink;
+		(n -> llink)->rlink = n -> rlink;
+
+
+		free(n);
 	}
 
 
@@ -255,6 +250,25 @@ int deleteLast(listNode* h) {
  */
 int insertFirst(listNode* h, int key) {
 
+	listNode* node = (listNode*)malloc(sizeof(listNode));
+	node -> key = key;
+	node -> rlink = h;
+	node -> llink = h;
+	listNode* n = h -> rlink;
+
+	if (h -> rlink == h) { // 리스트가 공백상태면
+
+		h -> llink = node;
+		h -> rlink = node;
+
+	}
+	else {
+		node -> llink = h; // 처음에 추가하는 것이기 때문에 새로 추가할 node의 llink는 headnode를 가리키도록 함
+		node->rlink = h->rlink; // node의 rlink는 headnode의 뒷 노드를 가리키도록 함
+		h -> rlink->llink = node; // headnode의 다음 노드의 llink가 새로 추가할 node를 가리키도록 함
+		h -> rlink = node; // headnode의 llink가 새로 추가할 노드를 가리키도록 변경; 
+
+	}
 
 	return 1;
 }
@@ -264,10 +278,27 @@ int insertFirst(listNode* h, int key) {
  */
 int deleteFirst(listNode* h) {
 
+	listNode* n = h -> rlink;
+
+	if (n == h) { // 리스트가 공백인지 검사
+		printf("List is empty!\n");
+		return 0;
+	}
+
+	else
+	{
+		(n -> rlink)->llink = n -> llink;
+		(n -> llink)->rlink = n -> rlink;
+
+		free(n);
+	}
 
 	return 1;
 
 }
+
+
+
 
 
 /**
@@ -275,33 +306,31 @@ int deleteFirst(listNode* h) {
  */
 int invertList(listNode* h) {
 
-       listNode* n = h->first;
+	listNode* node = h -> rlink;
+	listNode* prev = h;
 
-	listNode* next, * prev;
-	next, prev = NULL;
+	listNode* next = NULL;
 
-
-	if (h == NULL)
+	if (h -> rlink == h)
 	{
-		printf("Head Node is not initialized.\n");
-		return 0;
-	}
-	if (h->first == NULL)
-	{
-		printf("Linked list is empty!!\n\n");    // 리스트가 비었으면
+		printf("List is empty!!\n\n");    // 리스트가 비었으면
 		return 0;
 	}
 
-	while (h->first != NULL) {
-		next = prev;						
-		prev = n;						
+	while (prev != h) {
 
-		n = n->rlink;				//다음 노드의 위치 저장
-		prev->rlink = next;
-		prev->llink = n;
+		node -> llink = node -> rlink;
+		node -> rlink = prev;
+
+		prev = node;
+		node = node -> llink;
+
+		if (prev == h)
+			return 0;
+
 	}
 
-	h->first = prev;
+
 
 	return 0;
 }
@@ -313,6 +342,58 @@ int invertList(listNode* h) {
  **/
 int insertNode(listNode* h, int key) {
 
+
+	listNode* node = (listNode*)malloc(sizeof(listNode));
+	node -> key = key; // 새로 생성한 노드의 데이터 값에 입력받은 데이터값 대입
+	listNode* n = h;
+	listNode* prev = NULL;
+	node -> rlink = h;
+	node -> llink = h;
+
+	if (h -> rlink == h)
+	{
+		h -> llink = node;
+		h -> rlink = node;
+	}
+
+	else {
+		if (h -> key >= node -> key) {
+
+			node -> rlink = n;
+			n -> llink = node;
+			h -> rlink = node;
+		}
+
+		else {
+
+
+			while (n -> key < node -> key) {
+
+
+				if (n -> key <= node -> key && n -> rlink == h)
+				{
+					node -> rlink = n -> rlink;
+					node -> llink = n;
+					n -> rlink = node;
+					h -> llink = node;
+
+					return 0;
+				}
+
+				prev = n; // trail의 값을 n으로 하나 증가
+				n = n -> rlink;
+
+			}
+
+			prev -> rlink = node;
+			node -> rlink = n;
+			n ->llink = node;
+			node -> llink = prev;
+
+
+		}
+	}
+
 	return 0;
 }
 
@@ -321,6 +402,27 @@ int insertNode(listNode* h, int key) {
  * list에서 key에 대한 노드 삭제
  */
 int deleteNode(listNode* h, int key) {
+
+	listNode* node = h -> rlink;
+
+	if (node == h) {
+		printf("Linked list is empty.\n");
+		return 0;
+	}
+
+	while (node -> key != key && node != h)
+		node = h -> rlink -> rlink;
+
+
+	if (node->key == key)
+	{
+		node -> llink -> rlink = node -> rlink;
+		node -> rlink -> llink = node -> llink;
+
+		free(node);
+	}
+	else
+		return 0;
 
 	return 0;
 }
